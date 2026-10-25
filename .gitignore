@@ -31,7 +31,15 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
+.env.production
+.env.development
+
+# PocketBase local database and storage
+pb_data/
+pb_migrations/
+pocketbase/pb_data/
 
 # typescript
 *.tsbuildinfo
@@ -41,3 +49,5 @@ example
 # generated native folders
 /ios
 /android
+
+/learn_platform_handoff

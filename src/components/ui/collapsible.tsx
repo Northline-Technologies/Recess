@@ -1,40 +1,52 @@
-import { SymbolView } from 'expo-symbols';
-import { PropsWithChildren, useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
-
+import React, { PropsWithChildren, useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { useAppTheme } from '@/context/ThemeContext';
 
-export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
+export function Collapsible({ children, title }: PropsWithChildren<{ title: string }>) {
   const [isOpen, setIsOpen] = useState(false);
-  const theme = useTheme();
+  const { colors, spacing, radii } = useAppTheme();
 
   return (
     <ThemedView>
       <Pressable
-        style={({ pressed }) => [styles.heading, pressed && styles.pressedHeading]}
+        style={({ pressed }) => [styles.heading, { gap: spacing.sm }, pressed && styles.pressedHeading]}
         onPress={() => setIsOpen((value) => !value)}>
-        <ThemedView type="backgroundElement" style={styles.button}>
-          <SymbolView
-            name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }}
-            size={14}
-            weight="bold"
-            tintColor={theme.text}
-            style={{ transform: [{ rotate: isOpen ? '-90deg' : '90deg' }] }}
+        <View
+          style={[
+            styles.button,
+            {
+              backgroundColor: colors.surfaceSecondary,
+              borderRadius: radii.sm,
+            },
+          ]}>
+          <Ionicons
+            name={isOpen ? 'chevron-down' : 'chevron-forward'}
+            size={16}
+            color={colors.textPrimary}
           />
-        </ThemedView>
+        </View>
 
-        <ThemedText type="small">{title}</ThemedText>
+        <ThemedText variant="body" style={{ fontWeight: '600' }}>
+          {title}
+        </ThemedText>
       </Pressable>
       {isOpen && (
-        <Animated.View entering={FadeIn.duration(200)}>
-          <ThemedView type="backgroundElement" style={styles.content}>
-            {children}
-          </ThemedView>
-        </Animated.View>
+        <ThemedView
+          color="surfaceSecondary"
+          style={[
+            styles.content,
+            {
+              marginTop: spacing.sm,
+              borderRadius: radii.md,
+              marginLeft: spacing.lg,
+              padding: spacing.md,
+            },
+          ]}>
+          {children}
+        </ThemedView>
       )}
     </ThemedView>
   );
@@ -44,22 +56,15 @@ const styles = StyleSheet.create({
   heading: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.two,
   },
   pressedHeading: {
     opacity: 0.7,
   },
   button: {
-    width: Spacing.four,
-    height: Spacing.four,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  content: {
-    marginTop: Spacing.three,
-    borderRadius: Spacing.three,
-    marginLeft: Spacing.four,
-    padding: Spacing.four,
-  },
+  content: {},
 });
