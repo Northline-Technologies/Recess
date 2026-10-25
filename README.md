@@ -1,2 +1,0 @@
-# Recess
-full stack
